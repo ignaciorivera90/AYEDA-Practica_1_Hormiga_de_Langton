@@ -34,7 +34,7 @@ static void PrintFormatINPUT() {
     << "\nFormato del archivo input.txt\n"
     << "------------------------\n"
     << "Linea 1: Tamaño de la cinta: base x altura\n"
-    << "Linea 2: Posición inicial y orientación de la hormiga (0, 1, 2 y 3 respectivamente izquierda, arriba, derecha, abajo): posicionX posicionY orientación\n"
+    << "Linea 2: Posición inicial y orientación de la hormiga (0, 1, 2 y 3 respectivamente izquierda, derecha, arriba, abajo): posicionX posicionY orientación\n"
     << "Línea 3..n: Posiciones de las celdas negras (valor binario 1):\n"
     << "posicionX posicionY\n"
     << "posicionX posicionY\n"
