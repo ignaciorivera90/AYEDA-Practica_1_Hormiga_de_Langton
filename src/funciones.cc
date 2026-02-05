@@ -32,7 +32,7 @@
  */
 void menu (int &option) {
   std::cout << "1. Cargar nuevo mundo" << std::endl;     
-  std::cout << "2. Mostrar recorrido de la hormiga" << std::endl;
+  std::cout << "2. Mostrar recorrido de la hormiga en el mundo actual" << std::endl;
   std::cout << "3. Guardar estado actual del mundo" << std::endl;
   std::cout << "4. Salir del programa" << std::endl;
   std::cout << "Introduce un numero > ";
