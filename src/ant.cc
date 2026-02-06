@@ -16,6 +16,7 @@
 
   * Historial de revisiones:
   *      05/02/2026 - Creacion (primera version) del codigo
+  *      06/02/2026 - Creacion de las implementaciones de la clase ant y sus comentarios
   */
 
 #include "ant.h"
@@ -51,6 +52,11 @@ Ant::Ant(int x, int y, Direction dir) {
 
 
 
+/**
+ * @param x
+ * @param y
+ * @brief change position
+ */
 void Ant::SetPosition(int x, int y) {
   posicion_x_ = x;
   posicion_y_ = y;
@@ -58,6 +64,10 @@ void Ant::SetPosition(int x, int y) {
 
 
 
+/**
+ * @param dir
+ * @brief change direccion
+ */
 void Ant::SetDirection(Direction dir) {
   direction_ = dir;
   switch (dir) {
@@ -84,12 +94,19 @@ void Ant::SetDirection(Direction dir) {
 
 
 
+/**
+ * @param tape
+ * @brief perform a step in the simulation
+ */
 void Ant::Step(Tape &tape) {
   
 }
 
 
 
+/**
+ * @brief Change direction 90 degrees to the left
+ */
 void Ant::TurnLeft() {
   switch (direction_) {
     case LEFT:
@@ -115,6 +132,9 @@ void Ant::TurnLeft() {
 
 
 
+/**
+ * @brief Change direction 90 degrees to the right
+ */
 void Ant::TurnRight() {
   switch (direction_) {
     case LEFT:
@@ -140,6 +160,9 @@ void Ant::TurnRight() {
 
 
 
+/**
+ * @brief move forward
+ */
 void Ant::MoveForward() {
   switch (direction_) {
     case LEFT:
@@ -163,6 +186,13 @@ void Ant::MoveForward() {
   }
 }
 
+
+
+/**
+ * @param out
+ * @param ant
+ * @brief overloading the output operator to display the ant
+ */
 std::ostream &operator<<(std::ostream &out, const Ant &ant) {
   out << ant.direction_sprite_;
   return out;

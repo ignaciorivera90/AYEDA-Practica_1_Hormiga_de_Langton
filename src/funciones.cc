@@ -28,6 +28,7 @@
 
 
 /**
+ * @param option
  * @brief show menu
  */
 void menu (int &option) {
@@ -43,6 +44,7 @@ void menu (int &option) {
 
 /**
  * @brief Check that the opcode is correct
+ * @return Boolean type that returns whether the number of the chosen option is correct
  */
 bool CheckOption(const int &option) {
   std::vector<int> opciones = {1, 2, 3, 4};

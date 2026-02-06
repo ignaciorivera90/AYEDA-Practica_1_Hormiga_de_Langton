@@ -16,6 +16,7 @@
 
   * Historial de revisiones:
   *      05/02/2026 - Creacion (primera version) del codigo
+  *      06/02/2026 - Creacion de las enum Direction y Direction_Sprite, modificaciones de unas declaraciones y añadido de comentarios
   */
  
 #ifndef ANT_H
@@ -42,15 +43,17 @@ class Ant {
  public:
   Ant(int x, int y, Direction dir);
 
+  // Getters
   const int posicion_x() const { return posicion_x_; }
   const int posocion_y() const { return posicion_y_; }
   const Direction direction() const { return direction_; }
   const Direction_Sprite direction_sprite() const { return direction_sprite_; }
+  // Setters
   void SetPosition(int x, int y);
   void SetDirection(Direction dir);
 
-  //Movimiento
-  // ejecuta 1 paso completo usando Tape
+  // Movimiento
+  //ejecuta 1 paso completo usando Tape
   void Step(Tape& tape);
 
   // Visualización 
