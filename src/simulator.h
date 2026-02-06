@@ -29,7 +29,7 @@ class Simulator {
   // --- Constructores ---
   Simulator(int size_x, int size_y,
             int ant_x, int ant_y,
-            Ant::Direction dir);
+            Direction dir);
 
   Simulator(const std::string& filename);  // inicialización completa desde fichero
 

@@ -24,40 +24,44 @@
 #include <iostream>
 class Tape;  // forward declaration
 
+enum Direction {
+  LEFT,
+  RIGHT,
+  UP,
+  DOWN
+};
+
+enum Direction_Sprite {
+  SPRITE_UP    = '^',
+  SPRITE_LEFT  = '<', 
+  SPRITE_DOWN  = 'v', 
+  SPRITE_RIGHT = '>'  
+};
+
 class Ant {
  public:
-  enum class Direction {
-    LEFT = 0,
-    RIGHT = 1,
-    UP = 2,
-    DOWN = 3
-  };
+  Ant(int x, int y, Direction dir);
 
-  // --- Constructores ---
-  Ant(int x = 0, int y = 0, Direction dir = Direction::UP);
-
-  // --- Consultas ---
-  int GetX() const;
-  int GetY() const;
-  Direction GetDirection() const;
-
-  // --- Modificación ---
+  const int posicion_x() const { return posicion_x_; }
+  const int posocion_y() const { return posicion_y_; }
+  const Direction direction() const { return direction_; }
+  const Direction_Sprite direction_sprite() const { return direction_sprite_; }
   void SetPosition(int x, int y);
   void SetDirection(Direction dir);
 
-  // --- Movimiento ---
+  //Movimiento
   // ejecuta 1 paso completo usando Tape
   void Step(Tape& tape);
 
-  // --- Visualización ---
-  friend std::ostream& operator<<(std::ostream& os, const Ant& ant);
+  // Visualización 
+  friend std::ostream& operator<<(std::ostream& out, const Ant& ant);
 
  private:
-  int x_;
-  int y_;
-  Direction dir_;
+  int posicion_x_{0};
+  int posicion_y_{0};
+  Direction direction_{UP};
+  Direction_Sprite direction_sprite_{SPRITE_UP};
 
-  // Helpers privados (súper recomendados)
   void TurnLeft();
   void TurnRight();
   void MoveForward();
