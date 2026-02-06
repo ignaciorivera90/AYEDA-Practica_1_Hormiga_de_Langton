@@ -23,42 +23,39 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include "ant.h"
+class Ant; // forward declaration
 
 class Tape {
  public:
-  // --- Constructores ---
-  Tape(int size_x = 0, int size_y = 0);
+  Tape(int size_x, int size_y);
   Tape(const std::string& filename);   // inicialización leyendo fichero
 
-  // --- Consultas ---
-  int GetSizeX() const;
-  int GetSizeY() const;
+  //Getters
+  const int size_x() const { return size_x_; }
+  const int size_y() const { return size_y_; }
 
-  bool InBounds(int x, int y) const;   // útil para evitar salir
-  bool GetCell(int x, int y) const;    // color: 0 blanca, 1 negra
+  //Setters
+  void SetCell(int coords_x, int coords_y, bool value); //se usa para ingresar las celdas negras
+  void FlipCell(int coords_x, int coords_y);         // cambia blanco<->negro
 
-  // --- Modificación ---
-  void SetCell(int x, int y, bool value);
-  void FlipCell(int x, int y);         // cambia blanco<->negro
+  //Metodos
+  void InBounds(int coords_x, int coords_y) const;   // útil para evitar salir
+  const bool GetCell(int coords_x, int coords_y) const;    // color: 0 blanca, 1 negra
+  void ModifyAnt(int coords_x, int coords_y, Direction dir); // para colocar la hormiga
 
-  // --- I/O ---
+  //Para leer otro mundo o dibujar el mundo actual
   void LoadFromFile(const std::string& filename);
-  void SaveToFile(const std::string& filename,
-                  int ant_x, int ant_y, int ant_dir) const;
+  void SaveToFile(const std::string& filename, int ant_x, int ant_y, int ant_dir) const;
 
-  // --- Visualización ---
+  //Salida
   friend std::ostream& operator<<(std::ostream& os, const Tape& tape);
 
  private:
-  int size_x_;
-  int size_y_;
-
-  // Representación interna: matriz de bool/char
-  // (te conviene char para imprimir más fácil y ahorrar líos)
-  std::vector<std::vector<bool>> cells_;
-
-  // Helpers privados
-  void InitWhite();
+  int size_x_{0};
+  int size_y_{0};
+  std::vector<std::vector<bool>> world_;
+  const Ant* ant_ = nullptr;
 };
 
 #endif
