@@ -25,12 +25,15 @@
 #include "tape.h"
 #include "ant.h"
 
+
+
 class Simulator {
  public:
+  Simulator(int width, int height, int ant_x, int ant_y, Direction dir);
   Simulator(std::string filename);
 
   //Iniciar simulacion
-  void Run();         // bucle principal de simulación
+  void Run();
 
   //Guardar
   void Save(const std::string& filename) const;

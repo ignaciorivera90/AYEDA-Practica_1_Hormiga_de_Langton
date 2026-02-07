@@ -177,7 +177,7 @@ void Ant::TurnRight() {
 void Ant::MoveForward() {
   switch (direction_) {
     case LEFT:
-      --posicion_x_;
+      --posicion_x_; 
       break;
 
     case RIGHT:
@@ -208,3 +208,4 @@ std::ostream &operator<<(std::ostream &out, const Ant &ant) {
   out << ant.direction_sprite_;
   return out;
 }
+

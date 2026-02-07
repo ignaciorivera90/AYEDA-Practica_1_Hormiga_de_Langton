@@ -41,7 +41,6 @@ class Tape {
   void FlipCell(int coords_x, int coords_y);         // cambia blanco<->negro
 
   //Metodos
-  bool InBounds(int coords_x, int coords_y) const;   // útil para evitar salir, 0 dentro, 1 fuera
   const bool GetCell(int coords_x, int coords_y) const;    // color: 0 blanca, 1 negra
   void ModifyAnt(int coords_x, int coords_y, Direction dir); // para colocar la hormiga
 

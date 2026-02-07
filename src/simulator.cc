@@ -21,6 +21,45 @@
 #include "simulator.h"
 #include <iostream>
 
-Simulator::Simulator(std::string filename) {
 
+
+
+Simulator::Simulator(std::string filename) {
+  
+
+}
+
+
+
+void Simulator::Run() {
+
+}
+
+
+
+void Simulator::Save(const std::string &filename) const {
+  tape_.SaveToFile(filename);
+}
+
+
+
+void Simulator::Step() {
+  ant_.Step(tape_);
+}
+
+bool Simulator::Finished() const {
+    return ;
+}
+
+void Simulator::PrintState() const
+{
+}
+
+bool Simulator::AntOutOfBounds() const
+{
+    return false;
+}
+
+Simulator::Simulator(int width, int height, int ant_x, int ant_y, Direction dir) {
+  
 }

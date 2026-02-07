@@ -54,16 +54,6 @@ void Tape::FlipCell(int coords_x, int coords_y) {
 
 
 
-bool Tape::InBounds(int coords_x, int coords_y) const {
-  if ((0 <= coords_x <= size_x_) && (0 <= coords_y <= size_y_)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-
-
 const bool Tape::GetCell(int coords_x, int coords_y) const {
   return world_[coords_x][coords_y];
 }
@@ -110,7 +100,7 @@ void Tape::LoadFromFile(const std::string &filename) {
       int coords_x;
       int coords_y;
       int dir;
-      if ((iss >> coords_x >> coords_y >> dir) && (0 <= coords_x <= size_x_) && (0 <= coords_y <= size_y_)) {
+      if ((iss >> coords_x >> coords_y >> dir) && (1 <= coords_x <= size_x_) && (1 <= coords_y <= size_y_)) {
         ant_->SetPosition(coords_x, coords_y);
         ant_->SetDirection(Direction(dir));
       } else {
