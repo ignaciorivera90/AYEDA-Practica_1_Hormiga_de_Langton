@@ -16,6 +16,7 @@
 
   * Historial de revisiones:
   *      05/02/2026 - Creacion (primera version) del codigo
+  *      06/02/2026 - Creacion de las declaraciones de la clase tape y sus comentarios
   */
 #ifndef TAPE_H
 #define TAPE_H
@@ -36,17 +37,17 @@ class Tape {
   const int size_y() const { return size_y_; }
 
   //Setters
-  void SetCell(int coords_x, int coords_y, bool value); //se usa para ingresar las celdas negras
+  void SetCell(int coords_x, int coords_y, bool value); //se usa para ingresar las celdas 
   void FlipCell(int coords_x, int coords_y);         // cambia blanco<->negro
 
   //Metodos
-  void InBounds(int coords_x, int coords_y) const;   // útil para evitar salir
+  bool InBounds(int coords_x, int coords_y) const;   // útil para evitar salir, 0 dentro, 1 fuera
   const bool GetCell(int coords_x, int coords_y) const;    // color: 0 blanca, 1 negra
   void ModifyAnt(int coords_x, int coords_y, Direction dir); // para colocar la hormiga
 
   //Para leer otro mundo o dibujar el mundo actual
   void LoadFromFile(const std::string& filename);
-  void SaveToFile(const std::string& filename, int ant_x, int ant_y, int ant_dir) const;
+  void SaveToFile(const std::string& filename) const;
 
   //Salida
   friend std::ostream& operator<<(std::ostream& os, const Tape& tape);
@@ -55,7 +56,7 @@ class Tape {
   int size_x_{0};
   int size_y_{0};
   std::vector<std::vector<bool>> world_;
-  const Ant* ant_ = nullptr;
+  Ant* ant_ = nullptr;
 };
 
 #endif

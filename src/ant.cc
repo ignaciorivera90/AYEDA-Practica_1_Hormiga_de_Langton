@@ -17,6 +17,7 @@
   * Historial de revisiones:
   *      05/02/2026 - Creacion (primera version) del codigo
   *      06/02/2026 - Creacion de las implementaciones de la clase ant y sus comentarios
+  *      07/02/2026 - Creacion del metodo de Step
   */
 
 #include "ant.h"
@@ -97,9 +98,19 @@ void Ant::SetDirection(Direction dir) {
 /**
  * @param tape
  * @brief perform a step in the simulation
+ * @brief If it's over a white cell, change the color to black, rotate 90 degrees to the left, and move forward one cell.
+ * @brief If it's over a black cell, change the color to white, rotate 90 degrees to the right, and move forward one cell.
  */
 void Ant::Step(Tape &tape) {
-  
+  if(tape.GetCell(posicion_x_, posicion_y_)) {
+    tape.FlipCell(posicion_x_, posicion_y_);
+    TurnLeft();
+    MoveForward();
+  } else {
+    tape.FlipCell(posicion_x_, posicion_y_);
+    TurnRight();
+    MoveForward();
+  }
 }
 
 

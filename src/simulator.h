@@ -16,6 +16,7 @@
 
   * Historial de revisiones:
   *      05/02/2026 - Creacion (primera version) del codigo
+  *      07/02/2026 - Modificaciones en el la clase
   */
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
@@ -26,19 +27,12 @@
 
 class Simulator {
  public:
-  // --- Constructores ---
-  Simulator(int size_x, int size_y,
-            int ant_x, int ant_y,
-            Direction dir);
+  Simulator(std::string filename);
 
-  Simulator(const std::string& filename);  // inicialización completa desde fichero
-
-  // --- Control ---
+  //Iniciar simulacion
   void Run();         // bucle principal de simulación
-  void Step();        // un paso
-  bool Finished() const;
 
-  // --- Guardado ---
+  //Guardar
   void Save(const std::string& filename) const;
 
  private:
@@ -48,7 +42,8 @@ class Simulator {
   unsigned long steps_;
   bool finished_;
 
-  // Helpers
+  void Step();
+  bool Finished() const;
   void PrintState() const;
   bool AntOutOfBounds() const;
 };

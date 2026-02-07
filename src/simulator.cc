@@ -16,8 +16,11 @@
 
   * Historial de revisiones:
   *      05/02/2026 - Creacion (primera version) del codigo
+  *      07/02/2026 - Implementaciones de los metodos y comentarios
   */
 #include "simulator.h"
 #include <iostream>
 
-// aquí implementas todo
+Simulator::Simulator(std::string filename) {
+
+}
