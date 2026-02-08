@@ -28,6 +28,13 @@
 
 
 
+/**
+ * @brief Constructs a tape with fixed dimensions and initializes all cells to white (0/false).
+ *        Also places the ant in the center of the tape with an initial direction.
+ * @param size_x Width of the tape (X dimension).
+ * @param size_y Height of the tape (Y dimension).
+ * @note This implementation currently allocates an Ant dynamically (ant_).
+ */
 Tape::Tape(int size_x, int size_y) {
   size_x_ = size_x;
   size_y_ = size_y;
@@ -38,12 +45,27 @@ Tape::Tape(int size_x, int size_y) {
   ant_ = new Ant(size_x / 2, size_y / 2, UP); // colocar la hormiga en el centro del mundo
 }
 
+
+
+/**
+ * @brief Constructs a tape by loading its configuration from a text file.
+ * @param filename Path to the input file.
+ * @note The file is expected to follow the format described in the assignment.
+ */
 Tape::Tape(const std::string &filename) {
+  ant_ = new Ant(0, 0, UP);   // temporal hasta leer línea 2
   LoadFromFile(filename);
 }
 
 
 
+/**
+ * @brief Sets the value (color) of a cell in the tape.
+ * @param coords_x X coordinate of the cell.
+ * @param coords_y Y coordinate of the cell.
+ * @param value Cell value (false=white, true=black).
+ * @throw std::out_of_range if coordinates are outside the tape bounds.
+ */
 void Tape::SetCell(int coords_x, int coords_y, bool value) {
   CheckBoundsOrThrow(coords_x, coords_y, "Tape::SetCell");
   world_[coords_x][coords_y] = value;
@@ -51,6 +73,12 @@ void Tape::SetCell(int coords_x, int coords_y, bool value) {
 
 
 
+/**
+ * @brief Toggles a cell value: white <-> black.
+ * @param coords_x X coordinate.
+ * @param coords_y Y coordinate.
+ * @throw std::out_of_range if coordinates are outside the tape bounds.
+ */
 void Tape::FlipCell(int coords_x, int coords_y) {
   CheckBoundsOrThrow(coords_x, coords_y, "Tape::FlipCell");
   world_[coords_x][coords_y] = !world_[coords_x][coords_y];
@@ -58,6 +86,13 @@ void Tape::FlipCell(int coords_x, int coords_y) {
 
 
 
+/**
+ * @brief Returns the value (color) of a cell.
+ * @param coords_x X coordinate.
+ * @param coords_y Y coordinate.
+ * @return true if the cell is black, false if white.
+ * @throw std::out_of_range if coordinates are outside the tape bounds.
+ */
 const bool Tape::GetCell(int coords_x, int coords_y) const {
   CheckBoundsOrThrow(coords_x, coords_y, "Tape::GetCell");
   return world_[coords_x][coords_y];
@@ -65,6 +100,13 @@ const bool Tape::GetCell(int coords_x, int coords_y) const {
 
 
 
+/**
+ * @brief Updates the ant position and direction if the provided coordinates are valid.
+ * @param coords_x New X coordinate for the ant.
+ * @param coords_y New Y coordinate for the ant.
+ * @param dir New direction for the ant.
+ * @note If coordinates are invalid, the current implementation prints an error and keeps previous values.
+ */
 void Tape::ModifyAnt(int coords_x, int coords_y, Direction dir) {
   if (0 <= coords_x && coords_x < size_x_ && 0 <= coords_y && coords_y < size_y_) {
     ant_->SetPosition(coords_x, coords_y);
@@ -77,6 +119,14 @@ void Tape::ModifyAnt(int coords_x, int coords_y, Direction dir) {
 
 
 
+/**
+ * @brief Loads tape size, ant initial state and black cells from a text file.
+ * @param filename Path to the input file.
+ * @note Expected format:
+ *  Line 1: size_x size_y
+ *  Line 2: ant_x ant_y direction
+ *  Line 3..n: black_x black_y
+ */
 void Tape::LoadFromFile(const std::string &filename) {
   std::ifstream input(filename);   // abrir archivo
 
@@ -137,6 +187,14 @@ void Tape::LoadFromFile(const std::string &filename) {
 
 
 
+/**
+ * @brief Saves the current simulation state to a text file using the assignment format.
+ * @param filename Path to the output file.
+ * @note It writes:
+ *  Line 1: size_x size_y
+ *  Line 2: ant_x ant_y direction
+ *  Line 3..n: coordinates of black cells
+ */
 void Tape::SaveToFile(const std::string &filename) const {
   std::ofstream output(filename);   // abrir archivo
 
@@ -161,6 +219,15 @@ void Tape::SaveToFile(const std::string &filename) const {
   output.close();
 }
 
+
+
+/**
+ * @brief Prints the tape in text mode, including the ant position and orientation.
+ *        White cells are displayed as ' ' and black cells as 'X' (optionally colored).
+ * @param out Output stream.
+ * @param tape Tape to print.
+ * @return Output stream (for chaining).
+ */
 std::ostream &operator<<(std::ostream &out, const Tape &tape) {
   int ant_x = tape.ant_->posicion_x();
   int ant_y = tape.ant_->posicion_y();
@@ -184,6 +251,13 @@ std::ostream &operator<<(std::ostream &out, const Tape &tape) {
 
 
 
+/**
+ * @brief Checks if coordinates are within bounds. If not, prints an error and throws.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @param where String indicating where the check was called from (for debugging).
+ * @throw std::out_of_range if (x,y) is outside [0..size_x-1]x[0..size_y-1].
+ */
 void Tape::CheckBoundsOrThrow(int x, int y, const char* where) const {
   if (x < 0 || x >= size_x_ || y < 0 || y >= size_y_) {
     std::cerr << "[ERROR] " << where
@@ -195,7 +269,12 @@ void Tape::CheckBoundsOrThrow(int x, int y, const char* where) const {
 
 
 
-
+/**
+ * @brief Returns whether coordinates are inside the tape bounds.
+ * @param x X coordinate.
+ * @param y Y coordinate.
+ * @return true if inside bounds, false otherwise.
+ */
 bool Tape::InBounds(int x, int y) const {
   return (0 <= x && x < size_x_) && (0 <= y && y < size_y_);
 }

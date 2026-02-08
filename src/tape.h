@@ -32,6 +32,7 @@ class Tape {
  public:
   Tape(int size_x, int size_y);
   Tape(const std::string& filename);   // inicialización leyendo fichero
+  ~Tape() { delete ant_; }
 
   //Getters
   const int size_x() const { return size_x_; }
