@@ -25,6 +25,17 @@
 #include <sstream>     
 
 
+
+/**
+ * @brief Constructs an Ant with an initial position and direction.
+ * @param x Initial X position of the ant.
+ * @param y Initial Y position of the ant.
+ * @param dir Initial direction (LEFT, RIGHT, UP, DOWN).
+ *
+ * This constructor sets the internal position and direction of the ant,
+ * and also selects the correct sprite character used to display the ant
+ * depending on its orientation.
+ */
 Ant::Ant(int x, int y, Direction dir) {
   posicion_x_ = x;
   posicion_y_ = y;

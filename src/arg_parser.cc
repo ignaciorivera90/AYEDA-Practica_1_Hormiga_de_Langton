@@ -23,12 +23,29 @@
 #include <fstream>
 #include <string>
 
+
+
+/**
+ * @brief Checks if a file exists and can be opened.
+ * @param filename Path to the file.
+ * @return true if the file can be opened, false otherwise.
+ *
+ * This is used by the argument parser to validate the input file
+ * without fully processing it.
+ */
 bool FileExists(const std::string& filename) {
   std::ifstream file(filename);
   return file.good();   // true si existe y se pudo abrir
 }
 
 
+
+/**
+ * @brief Prints the expected input file format (assignment format).
+ *
+ * This function is only used when showing help information.
+ * It is kept as a static helper because it is only needed in this file.
+ */
 static void PrintFormatINPUT() {
   std::cout
     << "\nFormato del archivo input.txt\n"
@@ -40,6 +57,20 @@ static void PrintFormatINPUT() {
     << "x y\n\n";
 }
 
+
+
+/**
+ * @brief Parses command line arguments and returns the input file path.
+ * @param argc Number of arguments.
+ * @param argv Array of argument strings.
+ * @return Input file path, or empty string if help was requested.
+ * @throws std::invalid_argument if number of arguments is incorrect.
+ * @throws std::runtime_error if input file does not exist or cannot be opened.
+ *
+ * Supported usage:
+ *  - program input.txt
+ *  - program --help / -h
+ */
 std::string ArgParser::Parse(int argc, char* argv[]) {
   // Help: imprime y no es error
   for (int i = 1; i < argc; ++i) {
@@ -64,11 +95,25 @@ std::string ArgParser::Parse(int argc, char* argv[]) {
   return input_file;
 }
 
+
+
+/**
+ * @brief Prints a short usage message.
+ * @param progname Program name (argv[0]).
+ */
 void ArgParser::PrintUsage(const char* progname) {
   std::cout << "Uso: " << progname << " input.txt \n"
             << "Pruebe con --help o -h para mas informacion.\n";
 }
 
+
+
+/**
+ * @brief Prints full help information for the program.
+ * @param progname Program name (argv[0]).
+ *
+ * It includes a brief description and the expected input format.
+ */
 void ArgParser::PrintHelp(const char* progname) {
   std::cout << "Simulador del comportamiento de la hormiga de Langton\n"
             << "Uso: " << progname << " input.txt\n";

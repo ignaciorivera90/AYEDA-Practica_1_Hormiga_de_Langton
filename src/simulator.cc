@@ -33,6 +33,11 @@
 
 
 
+/**
+ * @brief Reads a full line from stdin and classifies the user action.
+ * @return 1 if user types 'q' or 'Q' (quit/back), 2 if user presses ENTER,
+ *         3 for any other input.
+ */
 int ReadUserAction() {
   std::string input;
   std::getline(std::cin, input);
@@ -44,7 +49,11 @@ int ReadUserAction() {
 
 
 
-static std::string ReadLine() {
+/**
+ * @brief Reads a full line from stdin.
+ * @return The read line (may be empty).
+ */
+std::string ReadLine() {
   std::string line;
   std::getline(std::cin, line);
   return line;
@@ -52,8 +61,13 @@ static std::string ReadLine() {
 
 
 
-
-static int ReadInt(const std::string& prompt) {
+/**
+ * @brief Reads an integer from stdin using a prompt, repeating until valid.
+ * @param prompt Text to show to the user.
+ * @return A valid integer.
+ * @note This function uses std::getline + std::stoi to avoid stream issues.
+ */
+int ReadInt(const std::string& prompt) {
   while (true) {
     std::cout << prompt;
     std::string s = ReadLine();
@@ -70,9 +84,13 @@ static int ReadInt(const std::string& prompt) {
 
 
 
+/**
+ * @brief Reads an unsigned long from stdin using a prompt, repeating until valid.
+ * @param prompt Text to show to the user.
+ * @return A valid unsigned long value.
+ */
 
-
-static unsigned long ReadULong(const std::string& prompt) {
+unsigned long ReadULong(const std::string& prompt) {
   while (true) {
     std::cout << prompt;
     std::string s = ReadLine();
@@ -89,8 +107,12 @@ static unsigned long ReadULong(const std::string& prompt) {
 
 
 
-
-static bool AskYesNo(const std::string& question) {
+/**
+ * @brief Asks a yes/no question until the user answers 's' or 'n'.
+ * @param question Question text.
+ * @return true if user answers 's'/'S', false if user answers 'n'/'N'.
+ */
+bool AskYesNo(const std::string& question) {
   while (true) {
     std::cout << question << " (s/n): ";
     std::string ans = ReadLine();
@@ -100,11 +122,20 @@ static bool AskYesNo(const std::string& question) {
   }
 }
 
+
 // Clase Simulator
 
-
-
-
+/**
+ * @brief Builds a simulation reading the initial state from a file.
+ * @param filename Input file path.
+ * @throws std::runtime_error if file cannot be opened.
+ * @throws std::invalid_argument if file format is invalid or values are out of range.
+ *
+ * Expected format:
+ *  Line 1: size_x size_y
+ *  Line 2: ant_x ant_y dir (0..3)
+ *  Line 3..n: black_x black_y
+ */
 Simulator::Simulator(const std::string& filename) : tape_(1, 1), ant_(0, 0, UP) {
   std::ifstream file(filename);
   if (!file.is_open()) {
@@ -155,6 +186,15 @@ Simulator::Simulator(const std::string& filename) : tape_(1, 1), ant_(0, 0, UP) 
 
 
 
+/**
+ * @brief Runs the main interactive menu of the simulator.
+ * The user can:
+ *  - Show the current state
+ *  - Run step-by-step (ENTER to advance, 'q' to go back)
+ *  - Run N steps
+ *  - Save the state
+ *  - Exit (asking to save before exiting)
+ */
 void Simulator::Run() {
   while (true) {
     clrscr();
@@ -271,11 +311,25 @@ void Simulator::Run() {
   }
 }
 
+
+
+/**
+ * @brief Saves the current simulation state to an output file.
+ * @param filename Output file path.
+ * @note The file format is delegated to Tape::SaveToFile().
+ */
 void Simulator::Save(const std::string& filename) const {
   tape_.SaveToFile(filename);
 }
 
 
+
+/**
+ * @brief Executes one simulation step.
+ * @note It calls Ant::Step(tape_) and increases the step counter.
+ * If the ant tries to leave the tape, Ant can throw std::out_of_range.
+ * In that case, the simulation is marked as finished.
+ */
 void Simulator::Step() {
   if (finished_) return;
 
@@ -290,15 +344,33 @@ void Simulator::Step() {
   }
 }
 
+
+
+/**
+ * @brief Returns whether the simulation has finished.
+ * @return true if finished, false otherwise.
+ */
 bool Simulator::Finished() const {
   return finished_;
 }
 
+
+
+/**
+ * @brief Prints the current simulation state (tape + steps).
+ * @note If you want to show the ant separately, print ant_ here too.
+ */
 void Simulator::PrintState() const {
   std::cout << "\nSteps: " << steps_ << std::endl;
   std::cout << tape_ << std::endl << std::endl;
 }
 
+
+
+/**
+ * @brief Checks if the ant position is outside the tape bounds.
+ * @return true if the ant is out of bounds, false otherwise.
+ */
 bool Simulator::AntOutOfBounds() const {
   return !tape_.InBounds(ant_.posicion_x(), ant_.posicion_y());
 }
