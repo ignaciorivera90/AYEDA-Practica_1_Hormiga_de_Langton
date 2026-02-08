@@ -206,9 +206,6 @@ void Tape::SaveToFile(const std::string &filename) const {
   output << size_x_ << " " << size_y_ << "\n";  // primera línea: tamaño del mundo
   output << ant_->posicion_x() << " " << ant_->posicion_y() << " " << ant_->direction() << "\n"; // segunda línea: posición y dirección de la hormiga
 
-  int ant_x = ant_->posicion_x();
-  int ant_y = ant_->posicion_y();
-
   for (int i = 0; i < size_x_; ++i) {
     for (int j = 0; j < size_y_; ++j) {
       if (world_[i][j] == 1) {
