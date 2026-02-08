@@ -24,6 +24,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <stdexcept>
 #include "ant.h"
 class Ant; // forward declaration
 
@@ -43,6 +44,7 @@ class Tape {
   //Metodos
   const bool GetCell(int coords_x, int coords_y) const;    // color: 0 blanca, 1 negra
   void ModifyAnt(int coords_x, int coords_y, Direction dir); // para colocar la hormiga
+  bool InBounds(int x, int y) const;
 
   //Para leer otro mundo o dibujar el mundo actual
   void LoadFromFile(const std::string& filename);
@@ -56,6 +58,8 @@ class Tape {
   int size_y_{0};
   std::vector<std::vector<bool>> world_;
   Ant* ant_ = nullptr;
+
+  void CheckBoundsOrThrow(int x, int y, const char* where) const;
 };
 
 #endif

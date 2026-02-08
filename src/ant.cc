@@ -22,7 +22,7 @@
 
 #include "ant.h"
 #include "tape.h"
-
+#include <sstream>     
 
 
 Ant::Ant(int x, int y, Direction dir) {
@@ -104,12 +104,12 @@ void Ant::SetDirection(Direction dir) {
 void Ant::Step(Tape &tape) {
   if(tape.GetCell(posicion_x_, posicion_y_)) {
     tape.FlipCell(posicion_x_, posicion_y_);
-    TurnLeft();
-    MoveForward();
+    TurnRight();
+    MoveForward(tape);
   } else {
     tape.FlipCell(posicion_x_, posicion_y_);
-    TurnRight();
-    MoveForward();
+    TurnLeft();
+    MoveForward(tape);
   }
 }
 
@@ -122,18 +122,22 @@ void Ant::TurnLeft() {
   switch (direction_) {
     case LEFT:
       direction_ = DOWN;
+      direction_sprite_ = SPRITE_DOWN;
       break;
 
     case RIGHT:
       direction_ = UP;
+      direction_sprite_ = SPRITE_UP;
       break;
 
     case UP:
       direction_ = LEFT;
+      direction_sprite_ = SPRITE_LEFT;
       break;
 
     case DOWN:
       direction_ = RIGHT;
+      direction_sprite_ = SPRITE_RIGHT;
       break;
   
     default:
@@ -150,18 +154,22 @@ void Ant::TurnRight() {
   switch (direction_) {
     case LEFT:
       direction_ = UP;
+      direction_sprite_ = SPRITE_UP;
       break;
 
     case RIGHT:
       direction_ = DOWN;
+      direction_sprite_ = SPRITE_DOWN;
       break;
 
     case UP:
       direction_ = RIGHT;
+      direction_sprite_ = SPRITE_RIGHT;
       break;
 
     case DOWN:
       direction_ = LEFT;
+      direction_sprite_ = SPRITE_LEFT;
       break;
   
     default:
@@ -174,27 +182,31 @@ void Ant::TurnRight() {
 /**
  * @brief move forward
  */
-void Ant::MoveForward() {
+void Ant::MoveForward(const Tape& tape) {
+  // Calcula siguiente posición SIN modificar todavía
+  int next_x = posicion_x_;
+  int next_y = posicion_y_;
+
   switch (direction_) {
-    case LEFT:
-      --posicion_x_; 
-      break;
-
-    case RIGHT:
-      ++posicion_x_;
-      break;
-
-    case UP:
-      ++posicion_y_;
-      break;
-
-    case DOWN:
-      --posicion_y_;
-      break;
-  
-    default:
-      break;
+    case Direction::LEFT:  --next_x; break;
+    case Direction::RIGHT: ++next_x; break;
+    case Direction::UP:    --next_y; break;
+    case Direction::DOWN:  ++next_y; break;
   }
+
+  // Comprueba límites con Tape
+  if (!tape.InBounds(next_x, next_y)) {
+    // Lanza excepción con info útil
+    std::ostringstream oss;
+    oss << "Ant::MoveForward: intento de salir de la cinta. "
+        << "pos=(" << posicion_x_ << "," << posicion_y_ << "), "
+        << "next=(" << next_x << "," << next_y << ")";
+    throw std::out_of_range(oss.str());
+  }
+
+  // Si es válido, entonces sí actualiza
+  posicion_x_ = next_x;
+  posicion_y_ = next_y;
 }
 
 

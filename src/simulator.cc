@@ -51,8 +51,8 @@ bool Simulator::Finished() const {
     return ;
 }
 
-void Simulator::PrintState() const
-{
+void Simulator::PrintState() const {
+  
 }
 
 bool Simulator::AntOutOfBounds() const

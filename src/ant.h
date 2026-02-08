@@ -23,6 +23,8 @@
 #define ANT_H
 
 #include <iostream>
+#include <stdexcept>   // std::out_of_range
+#include <string>
 class Tape;  // forward declaration
 
 enum Direction {
@@ -45,7 +47,7 @@ class Ant {
 
   // Getters
   const int posicion_x() const { return posicion_x_; }
-  const int posocion_y() const { return posicion_y_; }
+  const int posicion_y() const { return posicion_y_; }
   const Direction direction() const { return direction_; }
   const Direction_Sprite direction_sprite() const { return direction_sprite_; }
   // Setters
@@ -67,7 +69,7 @@ class Ant {
 
   void TurnLeft();
   void TurnRight();
-  void MoveForward();
+  void MoveForward(const Tape& tape);
 };
 
 #endif
