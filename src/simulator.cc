@@ -34,23 +34,12 @@
 
 
 int ReadUserAction() {
-  // Limpia posible '\n' pendiente (por si antes usaste cin >> ...)
-  if (std::cin.peek() == '\n') {
-    std::cin.get();
-  }
-
   std::string input;
   std::getline(std::cin, input);
 
-  if (input.empty()) {
-    return 2;   // Solo ENTER
-  }
-
-  if (input == "q" || input == "Q") {
-    return 1;   // Quit
-  }
-
-  return 3;     // Cualquier otra cosa
+  if (input.empty()) return 2;
+  if (input == "q" || input == "Q") return 1;
+  return 3;
 }
 
 
@@ -110,6 +99,8 @@ static bool AskYesNo(const std::string& question) {
     std::cout << "Respuesta no válida.\n";
   }
 }
+
+// Clase Simulator
 
 
 
@@ -245,13 +236,19 @@ void Simulator::Run() {
     if (op == 4) {
       std::cout << "Fichero de salida: ";
       std::string out = ReadLine();
-      if (!out.empty()) Save(out);
-      std::cout << "Estado guardado en '" << out << "'" << std::endl;
+
+      if (out.empty()) {
+        std::cout << "Nombre vacío. No se guarda.\n";
+      } else {
+        Save(out);
+        std::cout << "Estado guardado en '" << out << "'\n";
+      }
+
       std::cout << "Pulsa ENTER para volver al menu...";
       pressEnter();
       clrscr();
       continue;
-    }
+    } 
 
     if (op == 0) {
       // Requisito: antes de terminar, preguntar si desea guardar el estado final
@@ -285,6 +282,7 @@ void Simulator::Step() {
   try {
     ant_.Step(tape_);     // puede lanzar out_of_range si sale fuera
     ++steps_;
+    if (AntOutOfBounds()) finished_ = true;
   } catch (const std::out_of_range& e) {
     // si sale fuera se termina 
     std::cerr << "[FIN] La hormiga intentó salir de la cinta: " << e.what() << "\n";
