@@ -73,22 +73,22 @@ static void PrintFormatINPUT() {
  */
 std::string ArgParser::Parse(int argc, char* argv[]) {
   // Help: imprime y no es error
+  bool help_requested = false;
   for (int i = 1; i < argc; ++i) {
     if (std::strcmp(argv[i], "--help") == 0 || std::strcmp(argv[i], "-h") == 0) {
       PrintHelp(argv[0]);
+      help_requested = true;
       return "";  // main() puede hacer return 0;
     }
   }
 
   // Esperamos exactamente 1 argumento de entrada: prog input.txt
-  if (argc != 2) {
-    PrintUsage(argv[0]);
+  if (argc != 2 && !help_requested) {
     throw std::invalid_argument("Numero de argumentos invalido.");
   }
 
   const std::string input_file = argv[1];
   if (!FileExists(input_file)) {
-    PrintUsage(argv[0]);
     throw std::runtime_error("El fichero de entrada no existe o no se puede abrir: " + input_file);
   }
 

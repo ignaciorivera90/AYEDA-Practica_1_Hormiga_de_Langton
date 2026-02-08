@@ -38,11 +38,11 @@
 Tape::Tape(int size_x, int size_y) {
   size_x_ = size_x;
   size_y_ = size_y;
-  world_.resize(size_x);                 // tamaño en X
-  for (int i = 0; i < size_x; ++i) {
-    world_[i].resize(size_y, false);   // tamaño en Y + rellenar con 0
+  world_.resize(size_y);                 // tamaño en y
+  for (int i = 0; i < size_y; ++i) {
+    world_[i].resize(size_x, false);   // tamaño en x + rellenar con 0
   }
-  ant_ = new Ant(size_x / 2, size_y / 2, UP); // colocar la hormiga en el centro del mundo
+  ant_ = nullptr; // colocar la hormiga en el centro del mundo
 }
 
 
@@ -53,7 +53,7 @@ Tape::Tape(int size_x, int size_y) {
  * @note The file is expected to follow the format described in the assignment.
  */
 Tape::Tape(const std::string &filename) {
-  ant_ = new Ant(0, 0, UP);   // temporal hasta leer línea 2
+  ant_ = nullptr;   // temporal hasta leer línea 2
   LoadFromFile(filename);
 }
 
@@ -68,7 +68,7 @@ Tape::Tape(const std::string &filename) {
  */
 void Tape::SetCell(int coords_x, int coords_y, bool value) {
   CheckBoundsOrThrow(coords_x, coords_y, "Tape::SetCell");
-  world_[coords_x][coords_y] = value;
+  world_[coords_y][coords_x] = value;
 }
 
 
@@ -81,7 +81,7 @@ void Tape::SetCell(int coords_x, int coords_y, bool value) {
  */
 void Tape::FlipCell(int coords_x, int coords_y) {
   CheckBoundsOrThrow(coords_x, coords_y, "Tape::FlipCell");
-  world_[coords_x][coords_y] = !world_[coords_x][coords_y];
+  world_[coords_y][coords_x] = !world_[coords_y][coords_x];
 }
 
 
@@ -95,7 +95,7 @@ void Tape::FlipCell(int coords_x, int coords_y) {
  */
 const bool Tape::GetCell(int coords_x, int coords_y) const {
   CheckBoundsOrThrow(coords_x, coords_y, "Tape::GetCell");
-  return world_[coords_x][coords_y];
+  return world_[coords_y][coords_x];
 }
 
 
@@ -107,14 +107,8 @@ const bool Tape::GetCell(int coords_x, int coords_y) const {
  * @param dir New direction for the ant.
  * @note If coordinates are invalid, the current implementation prints an error and keeps previous values.
  */
-void Tape::ModifyAnt(int coords_x, int coords_y, Direction dir) {
-  if (0 <= coords_x && coords_x < size_x_ && 0 <= coords_y && coords_y < size_y_) {
-    ant_->SetPosition(coords_x, coords_y);
-    ant_->SetDirection(dir);
-  } else {
-    std::cerr << "Error modificando coordenadas de la hormiga y direccion" << std::endl;
-    std::cerr << "Se mantiene el valor anterior" << std::endl;
-  }
+void Tape::ModifyAnt(Ant* ant) {
+  ant_ = ant;
 }
 
 
@@ -145,9 +139,9 @@ void Tape::LoadFromFile(const std::string &filename) {
       if (iss >> size_x >> size_y) {
         size_x_ = size_x;
         size_y_ = size_y;
-        world_.resize(size_x);                 // tamaño en X
-        for (int i = 0; i < size_x; ++i) {
-          world_[i].resize(size_y, false);   // tamaño en Y + rellenar con 0
+        world_.resize(size_y);                 // tamaño en y
+        for (int i = 0; i < size_y; ++i) {
+          world_[i].resize(size_x, false);   // tamaño en x + rellenar con 0
         }
       } else {
         std::cerr << "Error leyendo tamaño del mundo" << std::endl;
@@ -206,10 +200,10 @@ void Tape::SaveToFile(const std::string &filename) const {
   output << size_x_ << " " << size_y_ << "\n";  // primera línea: tamaño del mundo
   output << ant_->posicion_x() << " " << ant_->posicion_y() << " " << ant_->direction() << "\n"; // segunda línea: posición y dirección de la hormiga
 
-  for (int i = 0; i < size_x_; ++i) {
-    for (int j = 0; j < size_y_; ++j) {
-      if (world_[i][j] == 1) {
-        output << i << " " << j << "\n";              // imprime para celda negra
+  for (int y = 0; y < size_y_; ++y) {
+    for (int x = 0; x < size_x_; ++x) {
+      if (world_[y][x] == 1) {
+        output << x << " " << y << "\n";              // imprime para celda negra
       }
     }
   }
@@ -228,13 +222,22 @@ void Tape::SaveToFile(const std::string &filename) const {
 std::ostream &operator<<(std::ostream &out, const Tape &tape) {
   int ant_x = tape.ant_->posicion_x();
   int ant_y = tape.ant_->posicion_y();
+  Direction_Sprite dir_sprite = tape.ant_->direction_sprite();
 
-  for (int i = 0; i < tape.size_x(); ++i) {
-    for (int j = 0; j < tape.size_y(); ++j) {
-      if (i == ant_x && j == ant_y) {
-        out << *(tape.ant_);          // imprime la hormiga
+  std::cerr << "TAPE ant: x=" << tape.ant_->posicion_x()
+          << " y=" << tape.ant_->posicion_y() << "\n";
+
+
+  for (int y = 0; y < tape.size_y(); ++y) {
+    for (int x = 0; x < tape.size_x(); ++x) {
+      if (x == ant_x && y == ant_y) {
+        if (tape.GetCell(x, y)) {
+          out << ORANGE << BG_BLACK << std::string(1, dir_sprite) << RESET;
+        } else {
+          out << ORANGE << BG_WHITE << std::string(1, dir_sprite) << RESET;
+        }
       } else {
-        if (tape.GetCell(i, j)) {
+        if (tape.GetCell(x, y)) {
           out  << BG_BLACK << 'X' << RESET;              // imprime 1 para celda negra
         } else {
           out << BG_WHITE << ' ' << RESET;              // imprime 0 para celda blanca
@@ -274,4 +277,50 @@ void Tape::CheckBoundsOrThrow(int x, int y, const char* where) const {
  */
 bool Tape::InBounds(int x, int y) const {
   return (0 <= x && x < size_x_) && (0 <= y && y < size_y_);
+}
+
+
+
+/**
+ * @brief Move constructor. Transfers the internal state from another Tape.
+ * @param other Source Tape object to move from.
+ *
+ * This constructor moves the world grid and copies the pointer to the ant.
+ * The source object is left in a safe empty state (no ant and size 0).
+ */
+Tape::Tape(Tape&& other) noexcept
+  : size_x_(other.size_x_),
+    size_y_(other.size_y_),
+    world_(std::move(other.world_)),
+    ant_(other.ant_) {
+  other.ant_ = nullptr;
+  other.size_x_ = 0;
+  other.size_y_ = 0;
+}
+
+
+
+/**
+ * @brief Move assignment operator. Transfers the state from another Tape.
+ * @param other Source Tape object to move from.
+ * @return Reference to this Tape.
+ *
+ * This operator moves the world grid and copies the pointer to the ant.
+ * The source object is reset to an empty state. No memory is deleted because
+ * the ant pointer is non-owning (Tape does not manage its lifetime).
+ */
+Tape& Tape::operator=(Tape&& other) noexcept {
+  if (this != &other) {
+    delete ant_;  // liberar lo actual
+
+    world_  = std::move(other.world_);
+    size_x_ = other.size_x_;
+    size_y_ = other.size_y_;
+    ant_    = other.ant_;
+
+    other.ant_ = nullptr;
+    other.size_x_ = 0;
+    other.size_y_ = 0;
+  }
+  return *this;
 }

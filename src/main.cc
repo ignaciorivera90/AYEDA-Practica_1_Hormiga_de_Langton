@@ -13,7 +13,8 @@ int main(int argc, char* argv[]) {
     Simulator sim(input_file);
     sim.Run();
   } catch (const std::exception& e) {
-    std::cerr << "\n[ERROR] " << e.what() << "\n";
+    std::cerr << "[ERROR] " << e.what() << "\n";
+    ArgParser::PrintUsage(argv[0]);
     return 1;
   }
   return 0;

@@ -32,7 +32,6 @@ class Tape {
  public:
   Tape(int size_x, int size_y);
   Tape(const std::string& filename);   // inicialización leyendo fichero
-  ~Tape() { delete ant_; }
 
   //Getters
   const int size_x() const { return size_x_; }
@@ -44,7 +43,7 @@ class Tape {
 
   //Metodos
   const bool GetCell(int coords_x, int coords_y) const;    // color: 0 blanca, 1 negra
-  void ModifyAnt(int coords_x, int coords_y, Direction dir); // para colocar la hormiga
+  void ModifyAnt(Ant* ant); // para colocar la hormiga
   bool InBounds(int x, int y) const;
 
   //Para leer otro mundo o dibujar el mundo actual
@@ -53,6 +52,14 @@ class Tape {
 
   //Salida
   friend std::ostream& operator<<(std::ostream& os, const Tape& tape);
+
+  // No copiar (evita double free)
+  Tape(const Tape&) = delete;
+  Tape& operator=(const Tape&) = delete;
+
+  // Sí mover (transferir propiedad del puntero)
+  Tape(Tape&& other) noexcept;
+  Tape& operator=(Tape&& other) noexcept;
 
  private:
   int size_x_{0};

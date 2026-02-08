@@ -166,6 +166,7 @@ Simulator::Simulator(const std::string& filename) : tape_(1, 1), ant_(0, 0, UP) 
   // Construimos el estado real
   tape_ = Tape(size_x, size_y);
   ant_  = Ant(ax, ay, static_cast<Direction>(dir_int));
+  tape_.ModifyAnt(&ant_);
 
   if (!tape_.InBounds(ax, ay)) {
     throw std::invalid_argument("La posición inicial de la hormiga está fuera de rango.");
@@ -361,7 +362,10 @@ bool Simulator::Finished() const {
  * @note If you want to show the ant separately, print ant_ here too.
  */
 void Simulator::PrintState() const {
-  std::cout << "\nSteps: " << steps_ << std::endl;
+  std::cerr << "SIM ant: x=" << ant_.posicion_x()
+          << " y=" << ant_.posicion_y() << "\n";
+
+  std::cout << "Steps: " << steps_ << std::endl;
   std::cout << tape_ << std::endl << std::endl;
 }
 
