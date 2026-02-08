@@ -17,49 +17,227 @@
   * Historial de revisiones:
   *      05/02/2026 - Creacion (primera version) del codigo
   *      07/02/2026 - Implementaciones de los metodos y comentarios
+  *      08/02/2026 - Modificaciones en el la clase
   */
 #include "simulator.h"
+
+#include <fstream>
 #include <iostream>
+#include <sstream>
+#include <stdexcept>   // std::out_of_range, std::invalid_argument, std::runtime_error
+
+// Funciones auxiliares para lectura de entrada y validación
 
 
 
 
-Simulator::Simulator(std::string filename) {
-  
-
+static std::string ReadLine() {
+  std::string line;
+  std::getline(std::cin, line);
+  return line;
 }
 
 
+
+
+static int ReadInt(const std::string& prompt) {
+  while (true) {
+    std::cout << prompt;
+    std::string s = ReadLine();
+    try {
+      size_t pos = 0;
+      int v = std::stoi(s, &pos);
+      if (pos != s.size()) throw std::invalid_argument("extra");
+      return v;
+    } catch (...) {
+      std::cout << "Entrada no válida.\n";
+    }
+  }
+}
+
+
+
+
+
+static unsigned long ReadULong(const std::string& prompt) {
+  while (true) {
+    std::cout << prompt;
+    std::string s = ReadLine();
+    try {
+      size_t pos = 0;
+      unsigned long v = std::stoul(s, &pos);
+      if (pos != s.size()) throw std::invalid_argument("extra");
+      return v;
+    } catch (...) {
+      std::cout << "Entrada no válida.\n";
+    }
+  }
+}
+
+
+
+
+static bool AskYesNo(const std::string& question) {
+  while (true) {
+    std::cout << question << " (s/n): ";
+    std::string ans = ReadLine();
+    if (ans == "s" || ans == "S") return true;
+    if (ans == "n" || ans == "N") return false;
+    std::cout << "Respuesta no válida.\n";
+  }
+}
+
+
+
+
+Simulator::Simulator(const std::string& filename) : tape_(1, 1), ant_(0, 0, UP) {
+  std::ifstream file(filename);
+  if (!file.is_open()) {
+    throw std::runtime_error("No se pudo abrir el fichero de entrada: " + filename);
+  }
+
+  int size_x = 0, size_y = 0;
+  int ax = 0, ay = 0;
+  int dir_int = 0;
+
+  // Línea 1: tamaño
+  if (!(file >> size_x >> size_y)) {
+    throw std::invalid_argument("Formato inválido: línea 1 (tamaño)");
+  }
+
+  // Línea 2: hormiga (x y dir)
+  if (!(file >> ax >> ay >> dir_int)) {
+    throw std::invalid_argument("Formato inválido: línea 2 (hormiga)");
+  }
+
+  if (size_x <= 0 || size_y <= 0) {
+    throw std::invalid_argument("Tamaño inválido (debe ser mayor a 0).");
+  }
+  if (dir_int < 0 || dir_int > 3) {
+    throw std::invalid_argument("Dirección inválida (debe ser 0..3).");
+  }
+
+  // Construimos el estado real
+  tape_ = Tape(size_x, size_y);
+  ant_  = Ant(ax, ay, static_cast<Direction>(dir_int));
+
+  if (!tape_.InBounds(ax, ay)) {
+    throw std::invalid_argument("La posición inicial de la hormiga está fuera de rango.");
+  }
+
+  // Línea 3..n: celdas negras
+  int bx = 0, by = 0;
+  while (file >> bx >> by) {
+    if (!tape_.InBounds(bx, by)) {
+      throw std::invalid_argument("Celda negra fuera de rango en fichero.");
+    }
+    tape_.SetCell(bx, by, true);
+  }
+
+  steps_ = 0;
+  finished_ = false;
+}
+
+// ---------- API pública ----------
 
 void Simulator::Run() {
+  while (true) {
+    std::cout << "\n===== Hormiga de Langton =====\n";
+    std::cout << "1) Mostrar estado\n";
+    std::cout << "2) Ejecutar 1 paso\n";
+    std::cout << "3) Ejecutar N pasos\n";
+    std::cout << "4) Guardar estado\n";
+    std::cout << "0) Salir\n";
+    std::cout << "==================================\n";
 
+    int op = ReadInt("Opcion: ");
+
+    if (op == 1) {
+      PrintState();
+      continue;
+    }
+
+    if (op == 2) {
+      Step();
+      PrintState();
+      if (Finished()) {
+        std::cout << "\n[FIN] Simulación terminada.\n";
+        if (AskYesNo("¿Deseas guardar el estado final?")) {
+          std::cout << "Fichero de salida: ";
+          std::string out = ReadLine();
+          if (!out.empty()) Save(out);
+        }
+        return;
+      }
+      continue;
+    }
+
+    if (op == 3) {
+      unsigned long n = ReadULong("N pasos: ");
+      for (unsigned long i = 0; i < n && !Finished(); ++i) {
+        Step();
+      }
+      PrintState();
+      if (Finished()) {
+        std::cout << "\n[FIN] Simulación terminada.\n";
+        if (AskYesNo("¿Deseas guardar el estado final?")) {
+          std::cout << "Fichero de salida: ";
+          std::string out = ReadLine();
+          if (!out.empty()) Save(out);
+        }
+        return;
+      }
+      continue;
+    }
+
+    if (op == 4) {
+      std::cout << "Fichero de salida: ";
+      std::string out = ReadLine();
+      if (!out.empty()) Save(out);
+      continue;
+    }
+
+    if (op == 0) {
+      // Requisito: antes de terminar, preguntar si desea guardar :contentReference[oaicite:5]{index=5}
+      if (AskYesNo("¿Deseas guardar el estado final antes de salir?")) {
+        std::cout << "Fichero de salida: ";
+        std::string out = ReadLine();
+        if (!out.empty()) Save(out);
+      }
+      return;
+    }
+
+    std::cout << "Opcion no valida.\n";
+  }
 }
 
-
-
-void Simulator::Save(const std::string &filename) const {
+void Simulator::Save(const std::string& filename) const {
   tape_.SaveToFile(filename);
 }
 
 
-
 void Simulator::Step() {
-  ant_.Step(tape_);
+  if (finished_) return;
+
+  try {
+    ant_.Step(tape_);     // puede lanzar out_of_range si sale fuera
+    ++steps_;
+  } catch (const std::out_of_range& e) {
+    // si sale fuera se termina 
+    std::cerr << "[FIN] La hormiga intentó salir de la cinta: " << e.what() << "\n";
+    finished_ = true;
+  }
 }
 
 bool Simulator::Finished() const {
-    return ;
+  return finished_;
 }
 
 void Simulator::PrintState() const {
-  
+  std::cout << "\nSteps: " << steps_ << "\n";
+  std::cout << tape_ << "\n";
 }
 
-bool Simulator::AntOutOfBounds() const
-{
-    return false;
-}
-
-Simulator::Simulator(int width, int height, int ant_x, int ant_y, Direction dir) {
-  
+bool Simulator::AntOutOfBounds() const {
+  return !tape_.InBounds(ant_.posicion_x(), ant_.posicion_y());
 }

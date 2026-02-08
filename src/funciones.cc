@@ -33,9 +33,10 @@
  */
 void menu (int &option) {
   std::cout << "1. Cargar nuevo mundo" << std::endl;     
-  std::cout << "2. Mostrar recorrido de la hormiga en el mundo actual" << std::endl;
-  std::cout << "3. Guardar estado actual del mundo" << std::endl;
-  std::cout << "4. Salir del programa" << std::endl;
+  std::cout << "2. Mostrar recorrido de la hormiga en el mundo actual paso a paso" << std::endl;
+  std::cout << "3. Mostrar recorrido de la hormiga en el mundo actual cierto numero de pasos" << std::endl;
+  std::cout << "4. Guardar estado actual del mundo" << std::endl;
+  std::cout << "5. Salir del programa" << std::endl;
   std::cout << "Introduce un numero > ";
   std::cin >> option;
 };
@@ -47,7 +48,7 @@ void menu (int &option) {
  * @return Boolean type that returns whether the number of the chosen option is correct
  */
 bool CheckOption(const int &option) {
-  std::vector<int> opciones = {1, 2, 3, 4};
+  std::vector<int> opciones = {1, 2, 3, 4, 5};
   for (const int& num : opciones) {
     if (option == num) {
       return true;

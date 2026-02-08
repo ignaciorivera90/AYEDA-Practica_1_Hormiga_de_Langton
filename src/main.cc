@@ -1,13 +1,21 @@
 #include <iostream>
 #include <string>
+#include <exception>
+
 #include "simulator.h"
 #include "arg_parser.h"
 
 int main(int argc, char* argv[]) {
-  std::string input_file = ArgParser::Parse(argc, argv);
-  // 1) leer filename si existe
-  // 2) crear Simulator
-  // 3) simulator.Run()
-  // 4) preguntar save
+  try {
+    std::string input_file = ArgParser::Parse(argc, argv);
+    if (input_file.empty()) return 0;
+    
+    Simulator sim(input_file);
+    sim.Run();
+  } catch (const std::exception& e) {
+    std::cerr << "\n[ERROR] " << e.what() << "\n";
+    return 1;
+  }
   return 0;
 }
+

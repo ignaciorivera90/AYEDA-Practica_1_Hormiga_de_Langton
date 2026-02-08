@@ -25,12 +25,9 @@
 #include "tape.h"
 #include "ant.h"
 
-
-
 class Simulator {
  public:
-  Simulator(int width, int height, int ant_x, int ant_y, Direction dir);
-  Simulator(std::string filename);
+  Simulator(const std::string& filename);
 
   //Iniciar simulacion
   void Run();
@@ -42,8 +39,8 @@ class Simulator {
   Tape tape_;
   Ant ant_;
 
-  unsigned long steps_;
-  bool finished_;
+  unsigned long steps_{0};
+  bool finished_{false};
 
   void Step();
   bool Finished() const;
