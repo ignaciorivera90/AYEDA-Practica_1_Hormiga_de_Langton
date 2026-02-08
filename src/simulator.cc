@@ -20,14 +20,38 @@
   *      08/02/2026 - Modificaciones en el la clase
   */
 #include "simulator.h"
+#include "funciones.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <limits>
+#include <string>
 #include <stdexcept>   // std::out_of_range, std::invalid_argument, std::runtime_error
 
 // Funciones auxiliares para lectura de entrada y validación
 
+
+
+int ReadUserAction() {
+  // Limpia posible '\n' pendiente (por si antes usaste cin >> ...)
+  if (std::cin.peek() == '\n') {
+    std::cin.get();
+  }
+
+  std::string input;
+  std::getline(std::cin, input);
+
+  if (input.empty()) {
+    return 2;   // Solo ENTER
+  }
+
+  if (input == "q" || input == "Q") {
+    return 1;   // Quit
+  }
+
+  return 3;     // Cualquier otra cosa
+}
 
 
 
@@ -138,36 +162,60 @@ Simulator::Simulator(const std::string& filename) : tape_(1, 1), ant_(0, 0, UP) 
   finished_ = false;
 }
 
-// ---------- API pública ----------
+
 
 void Simulator::Run() {
   while (true) {
-    std::cout << "\n===== Hormiga de Langton =====\n";
-    std::cout << "1) Mostrar estado\n";
-    std::cout << "2) Ejecutar 1 paso\n";
-    std::cout << "3) Ejecutar N pasos\n";
-    std::cout << "4) Guardar estado\n";
-    std::cout << "0) Salir\n";
-    std::cout << "==================================\n";
+    clrscr();
+    std::cout << "===== Hormiga de Langton =====" << std::endl;
+    std::cout << "1) Mostrar estado actual del mundo" << std::endl;
+    std::cout << "2) Mostrar recorrido de la hormiga en el mundo actual paso a paso" << std::endl;
+    std::cout << "3) Mostrar recorrido de la hormiga en el mundo actual n numero de pasos" << std::endl;
+    std::cout << "4) Guardar estado" << std::endl;
+    std::cout << "0) Salir" << std::endl;
+    std::cout << "==================================" << std::endl;
 
-    int op = ReadInt("Opcion: ");
+    int op = ReadInt("Introduce un numero > ");
+    clrscr();
 
     if (op == 1) {
       PrintState();
+      std::cout << "Pulsa ENTER para continuar...";
+      pressEnter();
+      clrscr();
       continue;
     }
 
     if (op == 2) {
-      Step();
-      PrintState();
-      if (Finished()) {
-        std::cout << "\n[FIN] Simulación terminada.\n";
-        if (AskYesNo("¿Deseas guardar el estado final?")) {
-          std::cout << "Fichero de salida: ";
-          std::string out = ReadLine();
-          if (!out.empty()) Save(out);
+      while (true) {
+        PrintState();
+        std::cout << "Pulsa ENTER para el siguiente paso, o 'q' + ENTER para volver al menu: ";
+        int action = ReadUserAction();
+        if (action == 1) {  // Quit
+          clrscr();
+          break;
+        } else if (action == 2) {  // Solo ENTER
+          // Continúa al siguiente paso
+          Step();
+          clrscr();
+        } else {
+          clrscr();
+          std::cout << "Opcion no valida." << std::endl;
+          std::cout << "Pulsa ENTER para continuar...";
+          pressEnter();
+          clrscr();
+          continue;
         }
-        return;
+        if (Finished()) {
+          clrscr();
+          std::cout << "\n[FIN] Simulación terminada." << std::endl;
+          if (AskYesNo("¿Deseas guardar el estado final?")) {
+            std::cout << "Fichero de salida: ";
+            std::string out = ReadLine();
+            if (!out.empty()) Save(out);
+          }
+          return;
+        }
       }
       continue;
     }
@@ -177,9 +225,9 @@ void Simulator::Run() {
       for (unsigned long i = 0; i < n && !Finished(); ++i) {
         Step();
       }
-      PrintState();
       if (Finished()) {
-        std::cout << "\n[FIN] Simulación terminada.\n";
+        clrscr();
+        std::cout << "\n[FIN] Simulación terminada." << std::endl;
         if (AskYesNo("¿Deseas guardar el estado final?")) {
           std::cout << "Fichero de salida: ";
           std::string out = ReadLine();
@@ -187,6 +235,10 @@ void Simulator::Run() {
         }
         return;
       }
+      PrintState();
+      std::cout << "Pulsa ENTER para continuar y volver al menu...";
+      pressEnter();
+      clrscr();
       continue;
     }
 
@@ -194,20 +246,31 @@ void Simulator::Run() {
       std::cout << "Fichero de salida: ";
       std::string out = ReadLine();
       if (!out.empty()) Save(out);
+      std::cout << "Estado guardado en '" << out << "'" << std::endl;
+      std::cout << "Pulsa ENTER para volver al menu...";
+      pressEnter();
+      clrscr();
       continue;
     }
 
     if (op == 0) {
-      // Requisito: antes de terminar, preguntar si desea guardar :contentReference[oaicite:5]{index=5}
+      // Requisito: antes de terminar, preguntar si desea guardar el estado final
       if (AskYesNo("¿Deseas guardar el estado final antes de salir?")) {
         std::cout << "Fichero de salida: ";
         std::string out = ReadLine();
         if (!out.empty()) Save(out);
+        std::cout << "Estado guardado en '" << out << "'" << std::endl;
+        std::cout << "Pulsa ENTER para salir...";
+        pressEnter();
+        clrscr();
       }
       return;
     }
 
-    std::cout << "Opcion no valida.\n";
+    std::cout << "Opcion no valida." << std::endl;
+    std::cout << "Pulsa ENTER para continuar...";
+    pressEnter();
+    clrscr();
   }
 }
 
@@ -234,8 +297,8 @@ bool Simulator::Finished() const {
 }
 
 void Simulator::PrintState() const {
-  std::cout << "\nSteps: " << steps_ << "\n";
-  std::cout << tape_ << "\n";
+  std::cout << "\nSteps: " << steps_ << std::endl;
+  std::cout << tape_ << std::endl << std::endl;
 }
 
 bool Simulator::AntOutOfBounds() const {

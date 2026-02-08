@@ -23,6 +23,7 @@
 
 void menu(int &option);
 void pressanykey();
+void pressEnter();
 void clrscr();
 bool CheckOption(const int &option);
 
