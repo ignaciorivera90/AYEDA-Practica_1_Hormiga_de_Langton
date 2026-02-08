@@ -362,9 +362,6 @@ bool Simulator::Finished() const {
  * @note If you want to show the ant separately, print ant_ here too.
  */
 void Simulator::PrintState() const {
-  std::cerr << "SIM ant: x=" << ant_.posicion_x()
-          << " y=" << ant_.posicion_y() << "\n";
-
   std::cout << "Steps: " << steps_ << std::endl;
   std::cout << tape_ << std::endl << std::endl;
 }

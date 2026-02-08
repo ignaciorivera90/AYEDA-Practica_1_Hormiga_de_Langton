@@ -224,10 +224,6 @@ std::ostream &operator<<(std::ostream &out, const Tape &tape) {
   int ant_y = tape.ant_->posicion_y();
   Direction_Sprite dir_sprite = tape.ant_->direction_sprite();
 
-  std::cerr << "TAPE ant: x=" << tape.ant_->posicion_x()
-          << " y=" << tape.ant_->posicion_y() << "\n";
-
-
   for (int y = 0; y < tape.size_y(); ++y) {
     for (int x = 0; x < tape.size_x(); ++x) {
       if (x == ant_x && y == ant_y) {
