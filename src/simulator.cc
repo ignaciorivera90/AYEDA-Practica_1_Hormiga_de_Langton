@@ -254,6 +254,7 @@ void Simulator::Run() {
 
     if (op == 3) {
       unsigned long n = ReadULong("N pasos: ");
+      clrscr();
       for (unsigned long i = 0; i < n && !Finished(); ++i) {
         Step();
       }
