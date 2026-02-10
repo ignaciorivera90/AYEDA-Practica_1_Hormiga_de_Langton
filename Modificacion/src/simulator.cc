@@ -364,6 +364,7 @@ bool Simulator::Finished() const {
  */
 void Simulator::PrintState() const {
   std::cout << "Steps: " << steps_ << std::endl;
+  std::cout << "Veces que giro a la derecha la hormiga: " << ant_.right_counter() << std::endl;
   std::cout << tape_ << std::endl << std::endl;
 }
 

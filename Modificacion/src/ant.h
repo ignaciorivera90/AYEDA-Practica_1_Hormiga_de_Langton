@@ -50,6 +50,7 @@ class Ant {
   const int posicion_y() const { return posicion_y_; }
   const Direction direction() const { return direction_; }
   const Direction_Sprite direction_sprite() const { return direction_sprite_; }
+  const int right_counter() const { return right_counter_; }
   // Setters
   void SetPosition(int x, int y);
   void SetDirection(Direction dir);
@@ -64,6 +65,7 @@ class Ant {
  private:
   int posicion_x_{0};
   int posicion_y_{0};
+  int right_counter_{0};
   Direction direction_{UP};
   Direction_Sprite direction_sprite_{SPRITE_UP};
 

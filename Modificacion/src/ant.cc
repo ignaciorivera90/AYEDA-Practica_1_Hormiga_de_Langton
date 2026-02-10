@@ -162,6 +162,7 @@ void Ant::TurnLeft() {
  * @brief Change direction 90 degrees to the right
  */
 void Ant::TurnRight() {
+  ++right_counter_;
   switch (direction_) {
     case LEFT:
       direction_ = UP;
